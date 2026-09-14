@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AI 페스타 방명록</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="adminBar" class="admin-bar hidden">
+  <span class="admin-bar-label">🛠️ 관리자 모드 — 포스트잇을 눌러서 삭제할 수 있어요</span>
+  <button id="clearAllBtn" class="danger-btn">전체 삭제</button>
+</div>
+
+<div class="sky" aria-hidden="true">
+  <span class="star s1">★</span><span class="star s2">✦</span><span class="star s3">★</span>
+  <span class="star s4">✦</span><span class="star s5">★</span><span class="star s6">✦</span>
+  <span class="star s7">★</span><span class="star s8">✦</span>
+</div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-badge">🤖</span>
+    <div class="brand-text">
+      <div class="title-row">
+        <h1 id="pageTitle">AI 페스타 방명록</h1>
+        <button id="editTitleBtn" class="edit-title-btn" title="제목 수정" aria-label="제목 수정">✏️</button>
+      </div>
+      <p>오늘 느낀 걸 포스트잇에 자유롭게 남겨줘 <span class="heart">💕</span></p>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button id="captureBtn" class="capture-btn" title="방명록 캡처" aria-label="방명록 캡처">📸</button>
+    <button id="adminToggleBtn" class="admin-toggle" title="관리자 모드">
+      <span id="adminIcon">🔒</span>
+    </button>
+  </div>
+</header>
+
+<section class="sentiment-gauge" aria-label="AI 감성 게이지">
+  <div class="gauge-head">
+    <span class="gauge-title">🤖 AI 감성 게이지</span>
+    <span class="gauge-sub" id="gaugeSub">아직 포스트잇이 없어요</span>
+  </div>
+  <div class="gauge-track">
+    <div class="gauge-fill" id="gaugeFill"></div>
+    <span class="gauge-heart" id="gaugeHeart">💗</span>
+  </div>
+</section>
+
+<main class="board-wrap">
+  <div id="board" class="board">
+    <p id="emptyState" class="empty-state">아직 포스트잇이 없어요!<br>제일 먼저 마음을 남겨볼래? 💌</p>
+  </div>
+</main>
+
+<button id="newNoteBtn" class="fab">
+  <span class="fab-icon">✏️</span>
+  <span class="fab-label">포스트잇 쓰기</span>
+</button>
+
+<!-- 노트 작성 모달 -->
+<div id="editorModal" class="modal-overlay hidden">
+  <div class="modal note-editor">
+    <div class="modal-header">
+      <h2>새 포스트잇 ✨</h2>
+      <button class="close-btn" id="closeEditorBtn">✕</button>
+    </div>
+
+    <div class="editor-body">
+      <div class="editor-canvas-wrap">
+        <div id="noteCanvasFrame" class="note-canvas-frame" style="--note-color:#FFE29A;">
+          <span class="pin">📌</span>
+          <canvas id="noteCanvas" width="520" height="520"></canvas>
+        </div>
+      </div>
+
+      <div class="editor-controls">
+        <div class="control-group">
+          <label>포스트잇 색</label>
+          <div class="swatch-row" id="bgSwatches">
+            <button class="swatch" data-color="#FFE29A" style="--c:#FFE29A"></button>
+            <button class="swatch" data-color="#FFB8D9" style="--c:#FFB8D9"></button>
+            <button class="swatch" data-color="#B8F1D9" style="--c:#B8F1D9"></button>
+            <button class="swatch" data-color="#BFD7FF" style="--c:#BFD7FF"></button>
+            <button class="swatch" data-color="#E3C6FF" style="--c:#E3C6FF"></button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label>펜 색</label>
+          <div class="swatch-row" id="penSwatches">
+            <button class="swatch pen" data-pen="#3D2C6D" style="--c:#3D2C6D"></button>
+            <button class="swatch pen" data-pen="#FF4F8B" style="--c:#FF4F8B"></button>
+            <button class="swatch pen" data-pen="#5C7CFA" style="--c:#5C7CFA"></button>
+            <button class="swatch pen" data-pen="#2FBF71" style="--c:#2FBF71"></button>
+            <button class="swatch pen" data-pen="#FF9F1C" style="--c:#FF9F1C"></button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label>펜 굵기</label>
+          <div class="size-row" id="sizeRow">
+            <button class="size-btn" data-size="4"><span class="dot" style="width:5px;height:5px"></span></button>
+            <button class="size-btn" data-size="9"><span class="dot" style="width:10px;height:10px"></span></button>
+            <button class="size-btn" data-size="16"><span class="dot" style="width:16px;height:16px"></span></button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label>오늘의 긍정 지수 💗</label>
+          <div class="heart-rate-row" id="heartRateRow">
+            <button class="heart-btn" data-value="1">🤍</button>
+            <button class="heart-btn" data-value="2">🤍</button>
+            <button class="heart-btn" data-value="3">🤍</button>
+            <button class="heart-btn" data-value="4">🤍</button>
+            <button class="heart-btn" data-value="5">🤍</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label>이름 (선택)</label>
+          <input type="text" id="authorInput" maxlength="10" placeholder="예: 1반 김민지">
+        </div>
+
+        <div class="control-group tool-row">
+          <button id="eraserBtn" class="tool-btn">🧽 지우개</button>
+          <button id="undoBtn" class="tool-btn">↩️ 실행취소</button>
+          <button id="clearCanvasBtn" class="tool-btn">🗑️ 전체지우기</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button id="cancelNoteBtn" class="ghost-btn">취소</button>
+      <button id="stickNoteBtn" class="primary-btn">보드에 붙이기 📌</button>
+    </div>
+  </div>
+</div>
+
+<!-- 방명록 제목 수정 모달 -->
+<div id="titleModal" class="modal-overlay hidden">
+  <div class="modal title-modal">
+    <h2>✏️ 방명록 제목 수정</h2>
+    <p>이번 달 행사 이름에 맞게 제목을 바꿔보세요.</p>
+    <input type="text" id="titleInput" maxlength="30" placeholder="예: AI 페스타 방명록">
+    <div class="modal-footer">
+      <button id="titleCancelBtn" class="ghost-btn">취소</button>
+      <button id="titleConfirmBtn" class="primary-btn">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 관리자 PIN 모달 -->
+<div id="pinModal" class="modal-overlay hidden">
+  <div class="modal pin-modal">
+    <h2>🔐 관리자 확인</h2>
+    <p>포스트잇을 삭제하려면 관리자 PIN을 입력하세요.</p>
+    <input type="password" id="pinInput" inputmode="numeric" maxlength="6" placeholder="PIN 입력">
+    <p id="pinError" class="pin-error hidden">PIN이 올바르지 않아요.</p>
+    <div class="modal-footer">
+      <button id="pinCancelBtn" class="ghost-btn">취소</button>
+      <button id="pinConfirmBtn" class="primary-btn">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- 삭제 확인 모달 -->
+<div id="deleteModal" class="modal-overlay hidden">
+  <div class="modal confirm-modal">
+    <h2>🗑️ 포스트잇 삭제</h2>
+    <p>이 포스트잇을 정말 삭제할까요?<br>삭제하면 되돌릴 수 없어요.</p>
+    <div class="modal-footer">
+      <button id="deleteCancelBtn" class="ghost-btn">취소</button>
+      <button id="deleteConfirmBtn" class="danger-btn">삭제하기</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
