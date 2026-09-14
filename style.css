@@ -279,8 +279,8 @@ body.admin-mode .edit-title-btn { display: inline-flex; }
 /* ===== Sticky note (on board) ===== */
 .note {
   --rot: 0deg;
-  width: clamp(148px, 15vw, 200px);
-  height: clamp(148px, 15vw, 200px);
+  width: clamp(190px, 20vw, 280px);
+  height: clamp(190px, 20vw, 280px);
   background: var(--note-color, #FFE29A);
   border-radius: 6px;
   position: absolute;
@@ -316,10 +316,10 @@ body.admin-mode .edit-title-btn { display: inline-flex; }
 }
 .note .pin {
   position: absolute;
-  top: -14px;
+  top: -16px;
   left: 50%;
   transform: translateX(-50%) rotate(-8deg);
-  font-size: 22px;
+  font-size: 26px;
   filter: drop-shadow(0 3px 3px rgba(0,0,0,0.3));
   pointer-events: none;
 }

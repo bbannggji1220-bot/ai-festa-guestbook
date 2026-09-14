@@ -211,8 +211,8 @@
 
   function randomPosition() {
     return {
-      x: 4 + Math.random() * 72,  // 4% ~ 76%
-      y: 5 + Math.random() * 62   // 5% ~ 67%
+      x: 4 + Math.random() * 64,  // 4% ~ 68%
+      y: 5 + Math.random() * 50   // 5% ~ 55%
     };
   }
 
